@@ -13,7 +13,7 @@ def main():
     numericProperties = [property for property, value in data[7].items() if isinstance(value, int) or isinstance(value, float)]
 
     # 일부 원소의 일부 특성은 자료가 존재하지 않습니다. (예시: 헬륨은 이온을 형성하지 않기에 ionRadius 값이 정의되어있지 않습니다.)
-    # 해당 데이터값들은 infinity로 설정하여 목표 원소를 찾을 때 제외시킵니다.
+    # 해당 데이터값들은 infinity로 설정하여, 그 특성을 포함하여 검색하는 경우 검색 결과에서 제외시킵니다.
     sanitizedData = sanitize(origitalData=data, properties=numericProperties)
 
     listSearchableProperties(properties=numericProperties)
