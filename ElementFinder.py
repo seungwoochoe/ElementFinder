@@ -112,10 +112,8 @@ def sanitize(origitalData, properties):
 
     for property in properties:
         for i in range(len(data)):
-            if isinstance(data[i][property], float):
+            if isNumeric(data[i][property]):
                 continue
-            elif isinstance(data[i][property], int):
-                data[i][property] = float(data[i][property])
             else:
                 data[i][property] = float('inf')
 
@@ -146,7 +144,13 @@ def getSearchConditions(properties):
             while True:
                 try:
                     value = float(input("목표 값: "))
-                    weight = float(input("가중치: "))
+                    weight = 0
+
+                    while weight <= 0:
+                        try:
+                            weight = float(input("가중치: "))
+                        except ValueError:
+                            continue
                     
                     conditions[property] = (value, weight)
                     print("\n현재 조건: ", conditions)
