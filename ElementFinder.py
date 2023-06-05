@@ -78,10 +78,11 @@ def performRangeSearch():
 # Mode 2
 def performOptimalElementSearch():
     data = getData()
-        # 원소 특성들 중 숫자로 나타낼 수 있는 것들만 추립니다.
-    numericProperties = [property for property, value in data[7].items() if isinstance(value, int) or isinstance(value, float)]
+    
+    # 원소 특성들 중 숫자로 나타낼 수 있는 것들만 추립니다.
+    numericProperties = [property for property, value in data[7].items() if isNumeric(value)]
 
-    # 일부 원소의 일부 특성은 자료가 존재하지 않습니다. (예시: 헬륨은 이온을 형성하지 않기에 ionRadius 값이 정의되어있지 않습니다.)
+    # 일부 원소의 일부 특성은 자료가 존재하지 않습니다. (예시: 헬륨의 ionRadius)
     # 해당 데이터값들은 infinity로 설정하여, 그 특성을 포함하여 검색하는 경우 검색 결과에서 제외시킵니다.
     sanitizedData = sanitize(origitalData=data, properties=numericProperties)
 
@@ -90,6 +91,10 @@ def performOptimalElementSearch():
 
     optimalElementIndex = findOptimalElementIndex(data=sanitizedData, conditions=searchConditions)
     displayResult(data[optimalElementIndex])
+
+
+def isNumeric(value):
+    return isinstance(value, int) or isinstance(value, float)
 
 
 def getData():
@@ -157,9 +162,10 @@ def findOptimalElementIndex(data, conditions):
     d = numpy.full(len(data), float(0))
 
     for (property, (targetValue, weight)) in conditions.items():
-        # property가 예를 들어 끓는점일 경우,
-        # 각 원소에 대해 `(해당 원소의 끓는점 - 목표 끓는점) / 모든 원소의 끓는점 표준편차`로 정규화 한 후, 음수를 없애기 위해 절댓값을 취합니다.
-        d += numpy.array(list(map(lambda element: abs((element[property] - targetValue) / stdev(property, data)) * weight, data)))
+        # property가 예를 들어 끓는점일 경우, 각 원소에 대해
+        # `(해당 원소의 끓는점 - 목표 끓는점) / 모든 원소의 끓는점 표준편차`를 구합니다.
+        tmp = map(lambda element: abs((element[property] - targetValue) / stdev(property, data)) * weight, data)
+        d += numpy.array(list(tmp))
 
     return d.argmin()
 
