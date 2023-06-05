@@ -8,6 +8,7 @@ import numpy
 
 def main():
     mode = input("\n1. 범위 검색\n2. 최적 원소 검색\n\n검색 모드를 선택해주세요: ")
+
     while True:
         if mode == "1":
             performRangeSearch()
@@ -19,6 +20,7 @@ def main():
             mode = input("검색 모드를 선택해주세요: ")
 
 
+# Mode 1
 def performRangeSearch():
     database = getData()
 
@@ -70,6 +72,8 @@ def performRangeSearch():
     print()
 
 
+
+# Mode 2
 def performOptimalElementSearch():
     data = getData()
         # 원소 특성들 중 숫자로 나타낼 수 있는 것들만 추립니다.
