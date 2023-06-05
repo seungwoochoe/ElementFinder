@@ -7,9 +7,72 @@ import numpy
 
 
 def main():
-    data = getData(url="https://neelpatel05.pythonanywhere.com")
-    
-    # 원소 특성들 중 숫자로 나타낼 수 있는 것들만 추립니다.
+    mode = input("\n1. 범위 검색\n2. 최적 원소 검색\n\n검색 모드를 선택해주세요: ")
+    while True:
+        if mode == "1":
+            performRangeSearch()
+            break
+        elif mode == "2":
+            performOptimalElementSearch()
+            break
+        else:
+            mode = input("검색 모드를 선택해주세요: ")
+
+
+def performRangeSearch():
+    database = getData()
+
+    conditions = []
+    print("------입력가능한 물성 목록------\n\nelectronegativity\nvanDerWaalsRadius\nionizationEnergy\nelectronAffinity\nmeltingPoint\nboilingPoint\ndensity\nstandardState(solid,liquid,gas)\nbondingtype(atomic,diatomic,metallic,covalent network)\ngroupblock(nonmetal,noble gas,halogen,metal,alkali metal,alkaline metal,transition metal,post-transition metal,metalloid,lanthanoid,actinoid)\n")
+    while True:
+        property_name = input("물성을 입력하세요 ('q' 입력 시 종료): ")
+        if property_name == 'q':
+            break
+
+        if property_name in ["electronegativity", "vanDerWaalsRadius", "ionizationEnergy", "electronAffinity", "meltingPoint", "boilingPoint", "density"]:
+            try:
+                min_value = float(input("물성의 최소 값 입력: "))
+                max_value = float(input("물성의 최대 값 입력: "))
+            except ValueError:
+                print("숫자 형식으로 값을 입력해주세요.")
+                continue
+
+            conditions.append((property_name, min_value, max_value))
+
+        elif property_name in ["standardState", "bondingType", "groupBlock"]:
+            value = input("원하는 값을 입력하세요: ")
+            conditions.append((property_name, value))
+
+        else:
+            print("잘못된 물성을 입력했습니다.")
+            continue
+
+        choice = input("추가 입력하시겠습니까? (y/n): ")
+        if choice.lower() != 'y':
+            break
+
+    matching_symbols = [
+        element["symbol"] for element in database
+        if all(
+            (condition[0] in element) and
+            (element[condition[0]] != "") and
+            (
+                (len(condition) == 2 and element[condition[0]] == condition[1]) or
+                (len(condition) == 3 and (condition[1] <= float(element[condition[0]]) <= condition[2]))
+            )
+            for condition in conditions
+        )
+    ]
+
+    print("조건에 부합하는 원소 기호:")
+    for symbol in matching_symbols:
+        print(symbol)
+    print()
+
+
+def performOptimalElementSearch():
+    data = getData()
+        # 원소 특성들 중 숫자로 나타낼 수 있는 것들만 추립니다.
     numericProperties = [property for property, value in data[7].items() if isinstance(value, int) or isinstance(value, float)]
 
     # 일부 원소의 일부 특성은 자료가 존재하지 않습니다. (예시: 헬륨은 이온을 형성하지 않기에 ionRadius 값이 정의되어있지 않습니다.)
@@ -23,11 +86,8 @@ def main():
     displayResult(data[optimalElementIndex])
 
 
-
-
-
-def getData(url):
-    response = requests.get(url)
+def getData():
+    response = requests.get("https://neelpatel05.pythonanywhere.com")
 
     if response.status_code == 200:
         return response.json()
@@ -53,12 +113,13 @@ def sanitize(origitalData, properties):
 
 
 def listSearchableProperties(properties):
-    print("\n검색 가능한 특성 목록:")
+    print("\n\n검색 가능한 특성 목록:")
 
     for property in properties:
         print("  " + property)
 
     print("\n")
+
 
 
 
