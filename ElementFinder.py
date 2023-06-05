@@ -7,9 +7,11 @@ import numpy
 
 
 def main():
-    mode = input("\n1. 범위 검색\n2. 최적 원소 검색\n\n검색 모드를 선택해주세요: ")
+    print("\n1. 범위 검색\n2. 최적 원소 검색\n")
 
     while True:
+        mode = input("검색 모드를 선택해주세요: ")
+
         if mode == "1":
             performRangeSearch()
             break
@@ -17,7 +19,7 @@ def main():
             performOptimalElementSearch()
             break
         else:
-            mode = input("검색 모드를 선택해주세요: ")
+            continue    
 
 
 # Mode 1
