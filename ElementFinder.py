@@ -141,7 +141,9 @@ def getSearchConditions(properties):
             while True:
                 try:
                     value = float(input("목표 값: "))
-                    conditions[property] = value
+                    weight = float(input("가중치: "))
+                    
+                    conditions[property] = (value, weight)
                     print("\n현재 조건: ", conditions)
                     break
                 except ValueError:
@@ -154,10 +156,10 @@ def getSearchConditions(properties):
 def findOptimalElementIndex(data, conditions):
     d = numpy.full(len(data), float(0))
 
-    for (property, targetValue) in conditions.items():
+    for (property, (targetValue, weight)) in conditions.items():
         # property가 예를 들어 끓는점일 경우,
         # 각 원소에 대해 `(해당 원소의 끓는점 - 목표 끓는점) / 모든 원소의 끓는점 표준편차`로 정규화 한 후, 음수를 없애기 위해 절댓값을 취합니다.
-        d += numpy.array(list(map(lambda element: abs((element[property] - targetValue) / stdev(property, data)), data)))
+        d += numpy.array(list(map(lambda element: abs((element[property] - targetValue) / stdev(property, data)) * weight, data)))
 
     return d.argmin()
 
