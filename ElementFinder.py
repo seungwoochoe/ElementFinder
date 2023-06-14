@@ -22,17 +22,17 @@ def main():
             continue    
 
 
+# ----------------------------------------------------------------------------------------------------------------
 # Mode 1
 def performRangeSearch():
     database = getData()
-
     conditions = []
-    print("------입력가능한 물성 목록------\n\nelectronegativity\nvanDerWaalsRadius\nionizationEnergy\nelectronAffinity\nmeltingPoint\nboilingPoint\ndensity\nstandardState(solid,liquid,gas)\nbondingtype(atomic,diatomic,metallic,covalent network)\ngroupblock(nonmetal,noble gas,halogen,metal,alkali metal,alkaline metal,transition metal,post-transition metal,metalloid,lanthanoid,actinoid)\n")
+    print("------입력가능한 물성 목록------\n\nelectronegativity\nvanDerWaalsRadius\nionizationEnergy\nelectronAffinity\nmeltingPoint\nboilingPoint\ndensity\nstandardState(solid,liquid,gas)\nbondingType(atomic,diatomic,metallic,covalent network)\ngroupblock(nonmetal,noble gas,halogen,metal,alkali metal,alkaline metal,transition metal,post-transition metal,metalloid,lanthanoid,actinoid)\n")
     while True:
-        property_name = input("물성을 입력하세요 ('q' 입력 시 종료): ")
-        if property_name == 'q':
-            break
+        property_name = input("물성을 입력하세요: ")
 
+#사용자에게 입력 가능한 물성 목록을 출력하고, 사용자로부터 검색할 물성을 입력받습니다.
+        
         if property_name in ["electronegativity", "vanDerWaalsRadius", "ionizationEnergy", "electronAffinity", "meltingPoint", "boilingPoint", "density"]:
             try:
                 min_value = float(input("물성의 최소 값 입력: "))
@@ -40,21 +40,28 @@ def performRangeSearch():
             except ValueError:
                 print("숫자 형식으로 값을 입력해주세요.")
                 continue
-
+#물성들 중 숫자(소수점) 형태로 입력 가능한 물성을 입력했을 때, 최소 값과 최대 값을 입력받습니다. 잘못된 값을 입력했을 때 오류메세지를 출력합니다.
+            
             conditions.append((property_name, min_value, max_value))
-
+#입력받은 물성과 최소/최대 값을 튜플 형태로 conditions 리스트에 저장합니다.
+            
         elif property_name in ["standardState", "bondingType", "groupBlock"]:
             value = input("원하는 값을 입력하세요: ")
             conditions.append((property_name, value))
 
+#물성들 중 문자열 형태로 입력 가능한 물성을 입력했을 때, 문자열을 입력받습니다.
+#예를 들어, standardState 를 입력하면, solid, liquid, gas 중 하나를 입력할 수 있습니다.
+#입력받은 물성과 값을 튜플 형태로 conditions 리스트에 저장합니다.
+            
         else:
             print("잘못된 물성을 입력했습니다.")
             continue
-
+        
         choice = input("추가 입력하시겠습니까? (y/n): ")
         if choice.lower() != 'y':
             break
-
+#y를 입력하면 추가 입력을 받습니다.
+        
     matching_symbols = [
         element["symbol"] for element in database
         if all(
@@ -67,14 +74,18 @@ def performRangeSearch():
             for condition in conditions
         )
     ]
-
+#condition 의 길이가 2인 경우,( (property_name, value)형태로 저장된 경우 ) 물성 값이 입력한 값과 일치하는지 확인합니다.
+#condition 의 길이가 3인 경우,( (property_name, min_value, max_value)형태로 저장된 경우 ) 물성 값이 입력한 범위에 속하는지 확인합니다.
+    
     print("조건에 부합하는 원소 기호:")
     for symbol in matching_symbols:
         print(symbol)
     print()
+#조건에 부합하는 원소 기호를 모두 출력합니다.
 
 
 
+# --------------------------------------------------------------------------------------------------------------------
 # Mode 2
 def performOptimalElementSearch():
     data = getData()
